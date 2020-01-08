@@ -106,7 +106,6 @@ def main():
                              "1.9 for Extremely Active (hard exercise 2 or more times per day, or training for marathon, or triathlon, etc.)",
                         choices=["1.2", "1.375", "1.55", "1.725", "1.9"])
     args = parser.parse_args()
-    print(args)
     gender_arg = args.gender_arg
     age_arg = args.age_arg
     unit_arg = args.unit_arg
