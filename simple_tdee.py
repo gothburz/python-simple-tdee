@@ -1,8 +1,10 @@
 import argparse
+from argparse import RawTextHelpFormatter
 import math
 
 class Person:
-    def __init__(self, gender, age, weight_kg=0, weight_lb=0, height_m=0, height_in=0, bmi=0, orig_hb_bmr=0):
+    def __init__(self, gender, age, weight_kg=0, weight_lb=0, height_m=0, height_in=0, bmi=0, orig_hb_bmr=0,
+                 rev_hb_bmr=0, mj_bmr=0, tdee=0, activity_level=0):
         self.gender = gender
         self.age = age
         self.weight_kg = weight_kg
@@ -11,40 +13,98 @@ class Person:
         self.height_in = height_in
         self.bmi = bmi
         self.orig_hb_bmr = orig_hb_bmr
+        self.rev_hb_bmr = rev_hb_bmr
+        self.mj_bmr = mj_bmr
+        self.tdee = tdee
+        self.activity_level = activity_level
 
     def convert_imp_to_metric(self):
         self.weight_kg = round(self.weight_lb / 2.205, 1)
         self.height_m = round(self.height_in / 39.37, 1)
+
         return self.weight_kg, self.height_m
 
     def calc_bmi(self):
         self.bmi = round(self.weight_kg / math.pow(self.height_m, 2), 1)
+
         return self.bmi
 
-    def calc_orig_harris_benedict(self):
+    def calc_orig_harris_benedict_bmr(self):
         """
             THIS FUNCTION CALCULATES THE ORIGINAL HARRIS-BENEDICT BMR EQUATION
             MEN - BMR = 66.4730 + (13.7516 x weight in kg) + (5.0033 x height in cm) – (6.7550 x age in years)
             WOMEN - BMR = 655.0955 + (9.5634 x weight in kg) + (1.8496 x height in cm) – (4.6756 x age in years)
+            :return: Original Harris-Benedict BMR Value
         """
         if self.gender == "male":
-            self.orig_hb_bmr = round(66.4730 + (13.7516 * self.weight_kg) + (5.0033 * (self.height_m * 100)) - (6.7550 * self.age), 1)
+            self.orig_hb_bmr = round(
+                66.4730 + (13.7516 * self.weight_kg) + (5.0033 * (self.height_m * 100)) - (6.7550 * self.age), 1
+            )
 
         if self.gender == "female":
-            self.orig_hb_bmr = round(655.0955 + (9.5634 * self.weight_kg) + (1.8496 * (self.height_m * 100)) - (4.6756 * self.age), 1)
+            self.orig_hb_bmr = round(
+                655.0955 + (9.5634 * self.weight_kg) + (1.8496 * (self.height_m * 100)) - (4.6756 * self.age), 1
+            )
 
         return self.orig_hb_bmr
 
+    def calc_rev_harris_benedict_bmr(self):
+        """
+            THIS FUNCTION CALCULATES THE REVISED HARRIS-BENEDICT BMR EQUATION
+            MEN - BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) - (5.677 x age in years)
+            WOMEN - BMR = 447.593 + (9.247 x weight in kg) + (3.098 x height in cm) - (4.330 x age in years)
+            :return: Revised Harris-Benedict BMR Value
+        """
+        if self.gender == "male":
+            self.rev_hb_bmr = round(
+                88.362 + (13.397 * self.weight_kg) + (4.799 * (self.height_m * 100)) - (5.677 * self.age), 1
+            )
+        if self.gender == "female":
+            self.rev_hb_bmr = round(
+                447.593 + (9.247 * self.weight_kg) + (3.098 * (self.height_m * 100)) - (4.330 * self.age), 1
+            )
+
+        return self.rev_hb_bmr
+
+    def calc_mj_bmr(self):
+        """
+        THIS FUNCTION CALCULATES THE MIFFLIN-ST JEOR BMR EQUATION
+        MEN - BMR (metric) = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) + 5
+        WOMEN - BMR (metric) = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) - 161
+        :return: Mifflin-St Jeor BMR
+        """
+        if self.gender == "male":
+            self.mj_bmr = round((10 * self.weight_kg) + (6.25 * (self.height_m * 100) - (5 * self.age) + 5), 1)
+        if self.gender == "female":
+            self.mj_bmr = round((10 * self.weight_kg) + (6.25 * (self.height_m * 100) - (5 * self.age) + 5), 1)
+
+        return self.mj_bmr
+
+    def calc_tdee(self):
+        self.tdee = round(self.mj_bmr * float(self.activity_level), 1)
+
+        return self.tdee
+
 
 def main():
-    parser = argparse.ArgumentParser(description="A Python Total Daily Energy Expenditure (TDEE) CLI Calculator. This program uses" +
-                                                 "the Mifflin-St Jeor Equation to calculate TDEE as it's considered to be more accurate," +
-                                                 "see https://www.ncbi.nlm.nih.gov/pubmed/15883556.")
-    parser.add_argument("--unit", metavar="UNIT", help="Unit of Measurement", choices=["metric", "imperial"], dest="unit_arg", required=True)
+    parser = argparse.ArgumentParser(
+        description="A Python Total Daily Energy Expenditure (TDEE) CLI Calculator.\n\n" +
+                    "This program uses the Mifflin-St Jeor Equation to calculate TDEE as it's considered to be more accurate," +
+                    "see https://www.ncbi.nlm.nih.gov/pubmed/15883556.", formatter_class=RawTextHelpFormatter)
+    parser.add_argument("--unit", metavar="UNIT", help="Unit of Measurement", choices=["metric", "imperial"],
+                        dest="unit_arg", required=True)
     parser.add_argument("--weight", metavar="WEIGHT", type=float, help="Your Weight.", dest="weight_arg")
     parser.add_argument("--height", metavar="HEIGHT", type=float, help="Your Height.", dest="height_arg")
     parser.add_argument("--age", metavar="AGE", type=float, help="Your Age.", dest="age_arg")
-    parser.add_argument("--gender", metavar="GENDER", help="Your Gender.", choices=["male", "female"], dest="gender_arg")
+    parser.add_argument("--gender", metavar="GENDER", help="Your Gender.", choices=["male", "female"],
+                        dest="gender_arg")
+    parser.add_argument("--activity-level", metavar="ACTIVITY LEVEL",
+                        help="1.2 for Sedentary (little or no exercise, desk job)\n" +
+                             "1.375 for Lightly Active (light exercise/activity 1-3 days/week)\n" +
+                             "1.55 for Moderately Active (moderate exercise/activity 6-7 days/week)\n" +
+                             "1.725  for Very Active (2-3 hours of hard exercise every day)\n" +
+                             "1.9 for Extremely Active (hard exercise 2 or more times per day, or training for marathon, or triathlon, etc.)",
+                        choices=["1.2", "1.375", "1.55", "1.725", "1.9"])
     args = parser.parse_args()
     print(args)
     gender_arg = args.gender_arg
@@ -52,18 +112,24 @@ def main():
     unit_arg = args.unit_arg
     weight_arg = args.weight_arg
     height_arg = args.height_arg
+    activity_level = args.activity_level
     if unit_arg == "imperial":
-        print("imperial")
         p = Person(gender=gender_arg,
                    age=age_arg,
                    weight_lb=weight_arg,
-                   height_in=height_arg)
+                   height_in=height_arg,
+                   activity_level=activity_level)
         p.weight_kg, p.height_m = p.convert_imp_to_metric()
-        print(p.weight_kg, p.height_m)
         bmi = p.calc_bmi()
-        print(bmi)
-        x = p.calc_orig_harris_benedict()
-        print(x)
+        print("Your BMI:", bmi)
+        orig_hb_bmr = p.calc_orig_harris_benedict_bmr()
+        print("Original Harris-Benedict Equation:", orig_hb_bmr)
+        rev_hb_bmr = p.calc_rev_harris_benedict_bmr()
+        print("Revised Harris-Benedict Equation:", rev_hb_bmr)
+        mj_bmr = p.calc_mj_bmr()
+        print("Mifflin-St. Jeor Equation", mj_bmr)
+        tdee = p.calc_tdee()
+        print("Your TDEE:", tdee)
 
     else:
         print("metric")
