@@ -123,13 +123,13 @@ def main():
         bmi = p.calc_bmi()
         print("Your BMI:", bmi)
         orig_hb_bmr = p.calc_orig_harris_benedict_bmr()
-        print("Original Harris-Benedict Equation:", orig_hb_bmr)
+        print("Original Harris-Benedict Equation:", orig_hb_bmr, "cals")
         rev_hb_bmr = p.calc_rev_harris_benedict_bmr()
-        print("Revised Harris-Benedict Equation:", rev_hb_bmr)
+        print("Revised Harris-Benedict Equation:", rev_hb_bmr, "cals")
         mj_bmr = p.calc_mj_bmr()
-        print("Mifflin-St. Jeor Equation", mj_bmr)
+        print("Mifflin-St. Jeor Equation", mj_bmr, "cals")
         tdee = p.calc_tdee()
-        print("Your TDEE:", tdee)
+        print("Total Daily Energy Expenditure (TDEE):", tdee, "cals")
 
     else:
         print("metric")
