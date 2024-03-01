@@ -33,14 +33,13 @@ class Person:
         self.activity_level = activity_level
 
     def convert_imp_to_metric(self):
-        self.weight_kg = round(self.weight_lb / 2.205, 1)
-        self.height_m = round(self.height_in / 39.37, 1)
+        self.weight_kg = self.weight_lb / 2.205
+        self.height_m = self.height_in / 39.37
 
         return self.weight_kg, self.height_m
 
     def calc_bmi(self):
-        self.bmi = round(self.weight_kg / math.pow(self.height_m, 2), 1)
-
+        self.bmi = self.weight_kg / math.pow(self.height_m, 2)
         return self.bmi
 
     def calc_orig_harris_benedict_bmr(self):
@@ -51,21 +50,19 @@ class Person:
         :return: Original Harris-Benedict BMR Value
         """
         if self.gender == "male":
-            self.orig_hb_bmr = round(
+            self.orig_hb_bmr = (
                 66.4730
                 + (13.7516 * self.weight_kg)
                 + (5.0033 * (self.height_m * 100))
-                - (6.7550 * self.age),
-                1,
+                - (6.7550 * self.age)
             )
 
         if self.gender == "female":
-            self.orig_hb_bmr = round(
+            self.orig_hb_bmr = (
                 655.0955
                 + (9.5634 * self.weight_kg)
                 + (1.8496 * (self.height_m * 100))
-                - (4.6756 * self.age),
-                1,
+                - (4.6756 * self.age)
             )
 
         return self.orig_hb_bmr
@@ -78,20 +75,18 @@ class Person:
         :return: Revised Harris-Benedict BMR Value
         """
         if self.gender == "male":
-            self.rev_hb_bmr = round(
+            self.rev_hb_bmr = (
                 88.362
                 + (13.397 * self.weight_kg)
                 + (4.799 * (self.height_m * 100))
-                - (5.677 * self.age),
-                1,
+                - (5.677 * self.age)
             )
         if self.gender == "female":
-            self.rev_hb_bmr = round(
+            self.rev_hb_bmr = (
                 447.593
                 + (9.247 * self.weight_kg)
                 + (3.098 * (self.height_m * 100))
-                - (4.330 * self.age),
-                1,
+                - (4.330 * self.age)
             )
 
         return self.rev_hb_bmr
@@ -104,22 +99,18 @@ class Person:
         :return: Mifflin-St Jeor BMR
         """
         if self.gender == "male":
-            self.mj_bmr = round(
-                (10 * self.weight_kg)
-                + (6.25 * (self.height_m * 100) - (5 * self.age) + 5),
-                1,
+            self.mj_bmr = (10 * self.weight_kg) + (
+                6.25 * (self.height_m * 100) - (5 * self.age) + 5
             )
         if self.gender == "female":
-            self.mj_bmr = round(
-                (10 * self.weight_kg)
-                + (6.25 * (self.height_m * 100) - (5 * self.age) + 5),
-                1,
+            self.mj_bmr = (10 * self.weight_kg) + (
+                6.25 * (self.height_m * 100) - (5 * self.age) + 5
             )
 
         return self.mj_bmr
 
     def calc_tdee(self):
-        self.tdee = round(self.mj_bmr * float(self.activity_level), 1)
+        self.tdee = self.mj_bmr * float(self.activity_level)
 
         return self.tdee
 
